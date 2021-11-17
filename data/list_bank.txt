@@ -1,0 +1,16 @@
+CTCP Bảo hiểm Ngân hàng Nông nghiệp Việt Nam - ABI - 3083
+Ngân hàng TMCP Á Châu - ACB - 3740
+CTCP Chứng khoán Agribank - AGR - 2978
+Tổng Công ty cổ phần Bảo Minh - BMI - 3726
+Tổng Công ty cổ phần Bảo hiểm Ngân hàng Đầu tư và Phát triển Việt Nam - BIC - 2548
+Ngân hàng TMCP Đầu tư và Phát triển Việt Nam - BID - 1948
+Tập đoàn Bảo Việt - BVH - 3098
+Ngân hàng TMCP Công Thương Việt Nam - CTG - 3083
+Ngân hàng TMCP Xuất nhập khẩu Việt Nam - EIB - 3010
+Ngân hàng TMCP Quân Đội - MBB - 2508
+Ngân hàng TMCP Quốc Dân - NVB - 2794
+Ngân hàng TMCP Ngoại thương Việt Nam - VCB - 3510
+Ngân hàng TMCP Sài Gòn - Hà Nội - SHB - 3832
+Ngân hàng TMCP Sài Gòn Thương Tín - STB - 3096
+Tổng Công ty cổ phần Bảo hiểm Bưu điện - PTI - 2679
+CTCP PVI - PVI - 3563
