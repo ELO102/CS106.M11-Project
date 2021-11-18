@@ -9,7 +9,7 @@
 
 ## Progess
 - Dataset
-    - [x] Crawl data (Minh - 17/11/2021)
+    - [x] Crawl data (Minh)
     - [ ] Statistics and visualize
 - Coding
     - [ ] Modify paper source code
