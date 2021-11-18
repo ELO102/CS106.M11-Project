@@ -1,5 +1,5 @@
 # CS106.M11-Project
-This repository reference from [ICAIF 2020 paper repo](https://github.com/AI4Finance-Foundation/Deep-Reinforcement-Learning-for-Automated-Stock-Trading-Ensemble-Strategy-ICAIF-2020)
+This repository reference from [Deep-Reinforcement-Learning-for-Automated-Stock-Trading-Ensemble-Strategy-ICAIF-2020](https://github.com/AI4Finance-Foundation/Deep-Reinforcement-Learning-for-Automated-Stock-Trading-Ensemble-Strategy-ICAIF-2020)
 ## Member
 |Order|    Member         |  ID        
 |:---:| :--------------------:     | :--:       
