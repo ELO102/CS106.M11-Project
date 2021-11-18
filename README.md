@@ -1,7 +1,7 @@
 # CS106.M11-Project
 ## Member
 |Order|    Member         |  ID        
-|:---:| :-----------:     | :--:       
+|:---:| :--------------------:     | :--:       
 |1    |    [Minh Nguyen Dang](https://github.com/ELO102)      |  19520164  
 |2    |    [Ty Le Kim](https://github.com/kimty15)      |  19522505
 |3    |    [Luan Nguyen Thanh](https://github.com/nguyenluan2001)      |  19521809
