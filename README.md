@@ -1,4 +1,5 @@
 # CS106.M11-Project
+This repository reference from [ICAIF 2020 paper repo](https://github.com/AI4Finance-Foundation/Deep-Reinforcement-Learning-for-Automated-Stock-Trading-Ensemble-Strategy-ICAIF-2020)
 ## Member
 |Order|    Member         |  ID        
 |:---:| :--------------------:     | :--:       
@@ -16,6 +17,7 @@
         - [ ] preprocessing
         - [ ] model
 - Training model
+    - [ ] Install environment
     - [ ] Train demo model with a small dataset
     - [ ] Train model with all dataset
         - [ ] ... (algo)
