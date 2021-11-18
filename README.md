@@ -10,7 +10,7 @@ This repository reference from [Deep-Reinforcement-Learning-for-Automated-Stock-
 
 ## Progess
 - Dataset
-    - [x] Crawl data (Minh)
+    - [x] Crawl data
     - [ ] Statistics and visualize
 - Coding
     - [ ] Modify paper source code
