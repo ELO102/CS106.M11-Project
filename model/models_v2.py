@@ -11,6 +11,8 @@ from stable_baselines import PPO2
 from stable_baselines import A2C
 from stable_baselines import DDPG
 from stable_baselines import TD3
+from stable_baselines import TRPO
+from stable_baselines import ACKTR
 
 import stable_baselines.gail
 from stable_baselines.gail import ExportDataset, generate_expert_traj
@@ -98,7 +100,28 @@ def train_GAIL(env_train, model_name, timesteps=1000):
     model.save(f"{config.TRAINED_MODEL_DIR}/{model_name}")
     print('Training time (PPO): ', (end - start) / 60, ' minutes')
     return model
+def train_TRPO(env_train, model_name, timesteps=25000):
+    """TRPO model"""
 
+    start = time.time()
+    model = TRPO('MlpPolicy', env_train, verbose=0)
+    model.learn(total_timesteps=timesteps)
+    end = time.time()
+
+    model.save(f"{config.TRAINED_MODEL_DIR}/{model_name}")
+    print('Training time (TRPO): ', (end - start) / 60, ' minutes')
+    return model
+def train_ACKTR(env_train, model_name, timesteps=25000):
+    """ACKTR model"""
+
+    start = time.time()
+    model = ACKTR('MlpPolicy', env_train, verbose=0)
+    model.learn(total_timesteps=timesteps)
+    end = time.time()
+
+    model.save(f"{config.TRAINED_MODEL_DIR}/{model_name}")
+    print('Training time (ACKTR): ', (end - start) / 60, ' minutes')
+    return model
 
 def DRL_prediction(df,
                    model,
