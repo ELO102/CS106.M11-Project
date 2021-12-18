@@ -42,7 +42,12 @@ def run_model() -> None:
     run_ensemble_strategy(df=data, 
                           unique_trade_date= unique_trade_date,
                           rebalance_window = rebalance_window,
-                          validation_window=validation_window)
+                          validation_window= validation_window)
+
+    # ## Single algo
+    # run_ensemble_strategy(df=data, 
+    #                       unique_trade_date= unique_trade_date,
+    #                       rebalance_window = rebalance_window)
 
     #_logger.info(f"saving model version: {_version}")
 

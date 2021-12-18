@@ -277,3 +277,93 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
 
     end = time.time()
     print("Ensemble Strategy took: ", (end - start) / 60, " minutes")
+
+###############################################################################################################################################
+###############################################################################################################################################
+###############################################################################################################################################
+###############################################################################################################################################
+###############################################################################################################################################
+###############################################################################################################################################
+
+def run_single_algo(df, unique_trade_date, rebalance_window) -> None:
+    """Ensemble Strategy that combines PPO, A2C and DDPG"""
+    print("============Start Ensemble Strategy============")
+    # for ensemble model, it's necessary to feed the last state
+    # of the previous model to the current model as the initial state
+    validation_window = 0
+
+    last_state_ensemble = []
+
+    # based on the analysis of the in-sample data
+    #turbulence_threshold = 140
+    insample_turbulence = df[(df.datadate<20151000) & (df.datadate>=20090000)]
+    insample_turbulence = insample_turbulence.drop_duplicates(subset=['datadate'])
+    insample_turbulence_threshold = np.quantile(insample_turbulence.turbulence.values, .90)
+
+    start = time.time()
+    for i in range(rebalance_window + validation_window, len(unique_trade_date), rebalance_window):
+        print("============================================")
+        ## initial state is empty
+        if i - rebalance_window - validation_window == 0:
+            # inital state
+            initial = True
+        else:
+            # previous state
+            initial = False
+
+        # Tuning trubulence index based on historical data
+        # Turbulence lookback window is one quarter
+        end_date_index = df.index[df["datadate"] == unique_trade_date[i - rebalance_window - validation_window]].to_list()[-1]
+        start_date_index = end_date_index - validation_window*30 + 1
+
+        historical_turbulence = df.iloc[start_date_index:(end_date_index + 1), :]
+        #historical_turbulence = df[(df.datadate<unique_trade_date[i - rebalance_window - validation_window]) & (df.datadate>=(unique_trade_date[i - rebalance_window - validation_window - 63]))]
+
+
+        historical_turbulence = historical_turbulence.drop_duplicates(subset=['datadate'])
+
+        historical_turbulence_mean = np.mean(historical_turbulence.turbulence.values)
+
+        if historical_turbulence_mean > insample_turbulence_threshold:
+            # if the mean of the historical data is greater than the 90% quantile of insample turbulence data
+            # then we assume that the current market is volatile,
+            # therefore we set the 90% quantile of insample turbulence data as the turbulence threshold
+            # meaning the current turbulence can't exceed the 90% quantile of insample turbulence data
+            turbulence_threshold = insample_turbulence_threshold
+        else:
+            # if the mean of the historical data is less than the 90% quantile of insample turbulence data
+            # then we tune up the turbulence_threshold, meaning we lower the risk
+            turbulence_threshold = np.quantile(insample_turbulence.turbulence.values, 1)
+        print("turbulence_threshold: ", turbulence_threshold)
+
+        ############## Environment Setup starts ##############
+        ## training env
+        train = data_split(df, start=20090000, end=unique_trade_date[i - rebalance_window - validation_window])
+        env_train = DummyVecEnv([lambda: StockEnvTrain(train)])
+        ############## Environment Setup ends ##############
+
+        ############## Training starts ##############
+        print("======Model training from: ", 20090000, "to ",
+              unique_trade_date[i - rebalance_window - validation_window])
+        # print("training: ",len(data_split(df, start=20090000, end=test.datadate.unique()[i-rebalance_window]) ))
+        # print("==============Model Training===========")
+        print("======A2C Training========")
+        model = train_A2C(env_train, model_name="A2C_30k_dow_{}".format(i), timesteps=30000)
+
+        ############## Training ends ##############
+
+        ############## Trading starts ##############
+        model_trade = model
+        print("======Trading from: ", unique_trade_date[i - rebalance_window], "to ", unique_trade_date[i])
+        #print("Used Model: ", model_ensemble)
+        last_state_ensemble = DRL_prediction(df=df, model=model_trade, name="ensemble",
+                                             last_state=last_state_ensemble, iter_num=i,
+                                             unique_trade_date=unique_trade_date,
+                                             rebalance_window=rebalance_window,
+                                             turbulence_threshold=turbulence_threshold,
+                                             initial=initial)
+        # print("============Trading Done============")
+        ############## Trading ends ##############
+
+    end = time.time()
+    print("Total time algorithm took: ", (end - start) / 60, " minutes")

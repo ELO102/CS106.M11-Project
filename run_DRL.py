@@ -18,7 +18,7 @@ from config.config import *
 from model.models import *
 import os
 
-def run_model() -> None:
+def run_model(runES) -> None:
     """Train the model."""
 
     # read and preprocess data
@@ -46,9 +46,10 @@ def run_model() -> None:
     
     ## Ensemble Strategy
     run_ensemble_strategy(df=data, 
-                          unique_trade_date= unique_trade_date,
-                          rebalance_window = rebalance_window,
-                          validation_window=validation_window)
+                        unique_trade_date= unique_trade_date,
+                        rebalance_window = rebalance_window,
+                        validation_window=validation_window)
+
 
     #_logger.info(f"saving model version: {_version}")
 
