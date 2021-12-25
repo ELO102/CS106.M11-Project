@@ -1,3 +1,9 @@
+# Turn off Warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 # common library
 import pandas as pd
 import numpy as np
