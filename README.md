@@ -9,15 +9,4 @@ This repository reference from [Deep-Reinforcement-Learning-for-Automated-Stock-
 |4    |    [Tu Nguyen Tan](https://github.com/TanTu1)      |  19522454
 
 ## Progess
-- Dataset
-    - [x] Crawl data
-    - [ ] Statistics and visualize
-- Coding
-    - [ ] Modify paper source code
-        - [ ] preprocessing
-        - [ ] model
-- Training model
-    - [ ] Install environment
-    - [ ] Train demo model with a small dataset
-    - [ ] Train model with all dataset
-        - [ ] ... (algo)
+https://docs.google.com/spreadsheets/d/1I9rqMPMpPbkuogfHMOtHHnv3bjlpaJvVKI63QxpjBEs/edit?fbclid=IwAR2bOwAHbq54UjzimzAzdpPDJ5uAUNtYDD1n1OrNz-0cpLipl97jN_3bbUY#gid=0
