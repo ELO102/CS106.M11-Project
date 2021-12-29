@@ -1,3 +1,9 @@
+# Turn off Warnings
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 # common library
 import pandas as pd
 import numpy as np
@@ -38,16 +44,16 @@ def run_model() -> None:
     rebalance_window = 63
     validation_window = 63
     
-    ## Ensemble Strategy
-    run_ensemble_strategy(df=data, 
-                          unique_trade_date= unique_trade_date,
-                          rebalance_window = rebalance_window,
-                          validation_window= validation_window)
+#     ## Ensemble Strategy
+#     run_ensemble_strategy(df=data, 
+#                           unique_trade_date= unique_trade_date,
+#                           rebalance_window = rebalance_window,
+#                           validation_window= validation_window)
 
-    # ## Single algo
-    # run_ensemble_strategy(df=data, 
-    #                       unique_trade_date= unique_trade_date,
-    #                       rebalance_window = rebalance_window)
+    ## Single algo
+    run_single_algo(df=data, 
+                  unique_trade_date= unique_trade_date,
+                  rebalance_window = rebalance_window)
 
     #_logger.info(f"saving model version: {_version}")
 

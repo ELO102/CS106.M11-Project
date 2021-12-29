@@ -92,8 +92,8 @@ def train_GAIL(env_train, model_name, timesteps=1000):
     generate_expert_traj(model, 'expert_model_gail', n_timesteps=100, n_episodes=10)
 
     # Load dataset
-    dataset = ExportDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
-    model = GAIL('MlpPolicy', env_train, dataset, verbose=1)
+    dataset = ExpertDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
+    model = GAIL('MLpPolicy', env_train, dataset, verbose=1)
 
     model.learn(total_timesteps=1000)
     end = time.time()
@@ -378,8 +378,8 @@ def run_single_algo(df, unique_trade_date, rebalance_window) -> None:
               unique_trade_date[i - rebalance_window - validation_window])
         # print("training: ",len(data_split(df, start=20090000, end=test.datadate.unique()[i-rebalance_window]) ))
         # print("==============Model Training===========")
-        print("======A2C Training========")
-        model = train_A2C(env_train, model_name="A2C_30k_dow_{}".format(i), timesteps=30000)
+        print("======GAIL Training========")
+        model = train_GAIL(env_train, model_name="GAIL_1k_dow_{}".format(i), timesteps=1000)
 
         ############## Training ends ##############
 
