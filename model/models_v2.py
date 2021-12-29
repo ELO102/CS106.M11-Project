@@ -93,7 +93,7 @@ def train_GAIL(env_train, model_name, timesteps=1000):
 
     # Load dataset
     dataset = ExpertDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
-    model = GAIL('MLpPolicy', env_train, dataset, verbose=1)
+    model = GAIL('MlpPolicy', env_train, dataset, verbose=1)
 
     model.learn(total_timesteps=1000)
     end = time.time()
