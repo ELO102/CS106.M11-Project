@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 import gym
+import os
 
 # RL models from stable-baselines
 from stable_baselines import GAIL, SAC
@@ -15,7 +16,7 @@ from stable_baselines import TRPO
 from stable_baselines import ACKTR
 
 import stable_baselines.gail
-from stable_baselines.gail import ExportDataset, generate_expert_traj
+from stable_baselines.gail import ExpertDataset, generate_expert_traj
 from stable_baselines.ddpg.policies import DDPGPolicy
 from stable_baselines.common.policies import MlpPolicy, MlpLstmPolicy, MlpLnLstmPolicy
 from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
@@ -92,7 +93,7 @@ def train_GAIL(env_train, model_name, timesteps=1000):
 
     # Load dataset
     dataset = ExportDataset(expert_path='expert_model_gail.npz', traj_limitation=10, verbose=1)
-    model = GAIL('MLpPolicy', env_train, dataset, verbose=1)
+    model = GAIL('MlpPolicy', env_train, dataset, verbose=1)
 
     model.learn(total_timesteps=1000)
     end = time.time()
@@ -180,9 +181,9 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
     # of the previous model to the current model as the initial state
     last_state_ensemble = []
 
-    ppo_sharpe_list = []
-    ddpg_sharpe_list = []
-    a2c_sharpe_list = []
+    trpo_sharpe_list = []
+    acktr_sharpe_list = []
+    gail_sharpe_list = []
 
     model_use = []
 
@@ -247,44 +248,47 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
               unique_trade_date[i - rebalance_window - validation_window])
         # print("training: ",len(data_split(df, start=20090000, end=test.datadate.unique()[i-rebalance_window]) ))
         # print("==============Model Training===========")
-        print("======A2C Training========")
-        model_a2c = train_A2C(env_train, model_name="A2C_30k_dow_{}".format(i), timesteps=30000)
-        print("======A2C Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
+        print("======GAIL Training========")
+        model_gail = train_GAIL(env_train, model_name="GAIL_1k_dow_{}".format(i))
+        print("======GAIL Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
               unique_trade_date[i - rebalance_window])
-        DRL_validation(model=model_a2c, test_data=validation, test_env=env_val, test_obs=obs_val)
-        sharpe_a2c = get_validation_sharpe(i)
-        print("A2C Sharpe Ratio: ", sharpe_a2c)
+        DRL_validation(model=model_gail, test_data=validation, test_env=env_val, test_obs=obs_val)
+        sharpe_gail = get_validation_sharpe(i)
+        os.rename('results/account_value_validation_{}.csv'.format(i), 'results/account_value_validation_GAIL_{}.csv'.format(i))
+        print("GAIL Sharpe Ratio: ", sharpe_gail)
 
-        print("======PPO Training========")
-        model_ppo = train_PPO(env_train, model_name="PPO_100k_dow_{}".format(i), timesteps=100000)
-        print("======PPO Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
+        print("======TRPO Training========")
+        model_trpo = train_TRPO(env_train, model_name="TRPO_25k_dow_{}".format(i))
+        print("======TRPO Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
               unique_trade_date[i - rebalance_window])
-        DRL_validation(model=model_ppo, test_data=validation, test_env=env_val, test_obs=obs_val)
-        sharpe_ppo = get_validation_sharpe(i)
-        print("PPO Sharpe Ratio: ", sharpe_ppo)
+        DRL_validation(model=model_trpo, test_data=validation, test_env=env_val, test_obs=obs_val)
+        sharpe_trpo = get_validation_sharpe(i)
+        os.rename('results/account_value_validation_{}.csv'.format(i), 'results/account_value_validation_TRPO_{}.csv'.format(i))
+        print("TRPO Sharpe Ratio: ", sharpe_trpo)
 
-        print("======DDPG Training========")
-        model_ddpg = train_DDPG(env_train, model_name="DDPG_10k_dow_{}".format(i), timesteps=10000)
-        #model_ddpg = train_TD3(env_train, model_name="DDPG_10k_dow_{}".format(i), timesteps=20000)
-        print("======DDPG Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
+        print("======ACKTR Training========")
+        model_acktr = train_ACKTR(env_train, model_name="ACKTR_25k_dow_{}".format(i))
+        print("======ACKTR Validation from: ", unique_trade_date[i - rebalance_window - validation_window], "to ",
               unique_trade_date[i - rebalance_window])
-        DRL_validation(model=model_ddpg, test_data=validation, test_env=env_val, test_obs=obs_val)
-        sharpe_ddpg = get_validation_sharpe(i)
+        DRL_validation(model=model_acktr, test_data=validation, test_env=env_val, test_obs=obs_val)
+        sharpe_acktr = get_validation_sharpe(i)
+        os.rename('results/account_value_validation_{}.csv'.format(i), 'results/account_value_validation_ACKTR_{}.csv'.format(i))
+        print("ACKTR Sharpe Ratio: ", sharpe_trpo)
 
-        ppo_sharpe_list.append(sharpe_ppo)
-        a2c_sharpe_list.append(sharpe_a2c)
-        ddpg_sharpe_list.append(sharpe_ddpg)
+        trpo_sharpe_list.append(sharpe_trpo)
+        gail_sharpe_list.append(sharpe_gail)
+        acktr_sharpe_list.append(sharpe_acktr)
 
         # Model Selection based on sharpe ratio
-        if (sharpe_ppo >= sharpe_a2c) & (sharpe_ppo >= sharpe_ddpg):
-            model_ensemble = model_ppo
-            model_use.append('PPO')
-        elif (sharpe_a2c > sharpe_ppo) & (sharpe_a2c > sharpe_ddpg):
-            model_ensemble = model_a2c
-            model_use.append('A2C')
+        if (sharpe_trpo >= sharpe_gail) & (sharpe_trpo >= sharpe_acktr):
+            model_ensemble = model_trpo
+            model_use.append('TRPO')
+        elif (sharpe_gail > sharpe_trpo) & (sharpe_gail > sharpe_acktr):
+            model_ensemble = model_gail
+            model_use.append('GAIL')
         else:
-            model_ensemble = model_ddpg
-            model_use.append('DDPG')
+            model_ensemble = model_acktr
+            model_use.append('ACKTR')
         ############## Training and Validation ends ##############
 
         ############## Trading starts ##############
@@ -298,6 +302,9 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
                                              initial=initial)
         # print("============Trading Done============")
         ############## Trading ends ##############
+    # save Sharpe_Ratio
+    sharpe_ratio = pd.DataFrame(data={'GAIL':gail_sharpe_list, 'TRPO':gail_sharpe_list, 'ACKTR':acktr_sharpe_list})
+    sharpe_ratio.to_csv('Sharpe_ratio_ES.csv')
 
     end = time.time()
     print("Ensemble Strategy took: ", (end - start) / 60, " minutes")
