@@ -273,7 +273,7 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
         DRL_validation(model=model_acktr, test_data=validation, test_env=env_val, test_obs=obs_val)
         sharpe_acktr = get_validation_sharpe(i)
         os.rename('results/account_value_validation_{}.csv'.format(i), 'results/account_value_validation_ACKTR_{}.csv'.format(i))
-        print("ACKTR Sharpe Ratio: ", sharpe_trpo)
+        print("ACKTR Sharpe Ratio: ", sharpe_acktr)
 
         trpo_sharpe_list.append(sharpe_trpo)
         gail_sharpe_list.append(sharpe_gail)
@@ -303,7 +303,7 @@ def run_ensemble_strategy(df, unique_trade_date, rebalance_window, validation_wi
         # print("============Trading Done============")
         ############## Trading ends ##############
     # save Sharpe_Ratio
-    sharpe_ratio = pd.DataFrame(data={'GAIL':gail_sharpe_list, 'TRPO':gail_sharpe_list, 'ACKTR':acktr_sharpe_list})
+    sharpe_ratio = pd.DataFrame(data={'GAIL':gail_sharpe_list, 'TRPO':trpo_sharpe_list, 'ACKTR':acktr_sharpe_list})
     sharpe_ratio.to_csv('Sharpe_ratio_ES.csv')
 
     end = time.time()
